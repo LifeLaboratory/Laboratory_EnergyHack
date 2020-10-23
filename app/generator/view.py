@@ -26,6 +26,7 @@ data = loads('''
 data = loads('''
 [
   {"name": "open", "action": "open_file", "file_path": "B:/Program Files (x86)/AbilityCash/AbilityCash.exe"},
+  {"name": "open", "action": "open_file", "file_path": "B:/Program Files (x86)/AbilityCash/AbilityCash.xls"},
   {"name": "Condition", "action": "click",  "object":  "AC-E"},
   {"name": "cycle", "action": "cycle", "index": 10, "for": 
     [
@@ -45,5 +46,5 @@ data = loads('''
   {"name": "Condition", "action": "save_value",  "object":  "AC-E", "source": "A1"}
 ]
 ''')
-# sprint(GenerateCode().create_code(data))
+print(GenerateCode().create_file(data))
 
