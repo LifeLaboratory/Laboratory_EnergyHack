@@ -46,5 +46,5 @@ data = loads('''
   {"name": "Condition", "action": "save_value",  "object":  "AC-E", "source": "A1"}
 ]
 ''')
-print(GenerateCode().create_file(data))
+# print(GenerateCode().create_file(data))
 
