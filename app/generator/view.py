@@ -27,21 +27,23 @@ data = loads('''
 [
   {"name": "open", "action": "open_file", "file_path": "B:/Program Files (x86)/AbilityCash/AbilityCash.exe"},
   {"name": "Condition", "action": "click",  "object":  "AC-E"},
-  {"name": "Condition", "action": "condition",  "value":  "1 < 2"},
   {"name": "cycle", "action": "cycle", "index": 10, "for": 
     [
         {"name": "Condition", "action": "click",  "object":  "AC-E"},
         {"name": "Condition", "action": "save_value",  "object":  "AC-E", "value": "123"},
+        {"name": "Condition", "action": "save_value",  "object":  "AC-E", "source": "A"},
         {"name": "cycle", "action": "cycle", "index": 10, "for": 
           [
               {"name": "Condition", "action": "click",  "object":  "AC-E"},
-              {"name": "Condition", "action": "save_value",  "object":  "AC-E", "value": "123"}
+              {"name": "Condition", "action": "save_value",  "object":  "AC-E", "value": "123"},
+              {"name": "Condition", "action": "save_value",  "object":  "AC-E", "source": "B"}
           ]
         }
     ]
   },
-  {"name": "Condition", "action": "save_value",  "object":  "AC-E", "value": "123"}
+  {"name": "Condition", "action": "save_value",  "object":  "AC-E", "value": "123"},
+  {"name": "Condition", "action": "save_value",  "object":  "AC-E", "source": "A1"}
 ]
 ''')
-# print(GenerateCode().create_code(data))
+# sprint(GenerateCode().create_code(data))
 
