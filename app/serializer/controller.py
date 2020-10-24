@@ -1,5 +1,5 @@
 from app.serializer.filters import *
-from app.serializer.provider import *
+from app.serializer.view import *
 
 
 def serialize(data):
@@ -33,7 +33,7 @@ def serialize(data):
             new_item.update(get_save_value_fields(nda_item))
 
         if is_condition_action(nda_item):
-            pass
+            new_item.update(get_condition_fields(nda_item))
 
         structure.append(new_item)
     print(structure)

@@ -13,7 +13,7 @@ def get_nda_data_by_action(nda, action):
 
 
 def get_field_from_nda(nda_item, key):
-    return nda_item[key]
+    return nda_item.get(key)
 
 
 def get_action_by_id(node_data_array, action_id):

@@ -11,12 +11,17 @@ def get_click_fields(nda_item):
 
 
 def get_save_value_fields(nda_item):
-    data = {
+    return {
         'object': get_field_from_nda(nda_item, 'object'),
         'value': get_field_from_nda(nda_item, 'value'),
         'source': get_field_from_nda(nda_item, 'source')
     }
-    return data
+
+
+def get_condition_fields(nda_item):
+    return {
+        "value": get_field_from_nda(nda_item, 'value')
+    }
 
 # def get_cycle_fields(nda_item):
 #     data = {
