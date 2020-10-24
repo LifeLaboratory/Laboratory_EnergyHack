@@ -38,7 +38,7 @@ class Excel:
         :return:
         """
         for operation in struct:
-            self.operations[operation.get('action')](operation, indent, iterator)
+            self.operations[operation.get('category')](operation, indent, iterator)
         return '\n'.join(self.code)
 
     def create_file(self, struct):
