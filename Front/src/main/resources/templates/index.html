@@ -1,0 +1,512 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Автоматизатор</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script src="go.js"></script>
+    <script id="code">
+        $(document).ready(function(){});
+
+        var globalJson = {};
+
+        function sendJson() {
+            $.ajax({
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                dataType: 'json',
+                type: 'POST',
+                url: 'http://90.189.213.170:13452/api/source',
+                data: globalJson,
+                success: function(result){
+                    console.log(result);
+                }
+            });
+        }
+
+        var Properties = new Map();
+        var selectItem = 0;
+
+        function init() {
+            var $ = go.GraphObject.make;
+
+            myDiagram =
+                $(go.Diagram, "myDiagramDiv",
+                    {
+                        "LinkDrawn": showLinkLabel,
+                        "LinkRelinked": showLinkLabel,
+                        "undoManager.isEnabled": true
+                    });
+
+            myDiagram.addDiagramListener("Modified", function (e) {
+            });
+
+            function nodeStyle() {
+                return [
+                    new go.Binding("location", "loc", go.Point.parse).makeTwoWay(go.Point.stringify),
+                    {
+                        locationSpot: go.Spot.Center
+                    }
+                ];
+            }
+
+            function makePort(name, align, spot, output, input) {
+                var horizontal = align.equals(go.Spot.Top) || align.equals(go.Spot.Bottom);
+                return $(go.Shape,
+                    {
+                        fill: "transparent",
+                        strokeWidth: 0,
+                        width: horizontal ? NaN : 8,
+                        height: !horizontal ? NaN : 8,
+                        alignment: align,
+                        stretch: (horizontal ? go.GraphObject.Horizontal : go.GraphObject.Vertical),
+                        portId: name,
+                        fromSpot: spot,
+                        fromLinkable: output,
+                        toSpot: spot,
+                        toLinkable: input,
+                        cursor: "pointer",
+                        mouseEnter: function (e, port) {
+                            if (!e.diagram.isReadOnly) port.fill = "rgba(255,0,255,0.5)";
+                        },
+                        mouseLeave: function (e, port) {
+                            port.fill = "transparent";
+                        }
+                    });
+            }
+
+            function textStyle() {
+                return {
+                    font: "bold 11pt Lato, Helvetica, Arial, sans-serif",
+                    stroke: "#F8F8F8"
+                }
+            }
+
+            myDiagram.nodeTemplateMap.add("",
+                $(go.Node, "Table", nodeStyle(),
+                    $(go.Panel, "Auto",
+                        $(go.Shape, "Rectangle",
+                            {fill: "#282c34", stroke: "#00A9C9", strokeWidth: 3.5},
+                            new go.Binding("figure", "figure")),
+                        $(go.TextBlock, textStyle(),
+                            {
+                                margin: 8,
+                                maxSize: new go.Size(160, NaN),
+                                wrap: go.TextBlock.WrapFit,
+                                editable: true
+                            },
+                            new go.Binding("text").makeTwoWay())
+                    ),
+                    makePort("T", go.Spot.Top, go.Spot.TopSide, false, true),
+                    makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
+                    makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
+                    makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false)
+                ));
+
+            myDiagram.nodeTemplateMap.add("open_file",
+                $(go.Node, "Table", nodeStyle(),
+                    $(go.Panel, "Auto",
+                        $(go.Shape, "Rectangle",
+                            {fill: "green", stroke: "#00A9C9", strokeWidth: 3.5},
+                            new go.Binding("figure", "figure")),
+                        $(go.TextBlock, textStyle(),
+                            {
+                                margin: 8,
+                                maxSize: new go.Size(160, NaN),
+                                wrap: go.TextBlock.WrapFit,
+                                editable: true,
+                            },
+                            new go.Binding("text").makeTwoWay())
+                    ),
+                    makePort("T", go.Spot.Top, go.Spot.TopSide, false, true),
+                    makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
+                    makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
+                    makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false),
+                    {
+                        click: function (event, object) {
+                            if (selectItem !== object.part.data.key) {
+                                document.getElementById("filePath").value = "";
+                                document.getElementById("filePathText").value = "";
+                            }
+                            selectItem = object.part.data.key;
+                            console.log(selectItem);
+                            console.log(Properties);
+                            var elementProperties = Properties.get(selectItem);
+                            if (elementProperties !== undefined) {
+                                document.getElementById("filePathText").value = elementProperties['file_path'];
+                            }
+                            let display = document.getElementById("propertiesForExcelDiv").style.display;
+                            if (display === 'none') {
+                                document.getElementById("propertiesForPushToProgramDiv").style.display = 'none';
+                                document.getElementById("propertiesForExcelDiv").style.display = 'block';
+                            }
+                        }
+                    }
+                ));
+
+            myDiagram.nodeTemplateMap.add("click",
+                $(go.Node, "Table", nodeStyle(),
+                    $(go.Panel, "Auto",
+                        $(go.Shape, "Ellipse",
+                            {fill: "slateblue", stroke: "#00A9C9", strokeWidth: 3.5},
+                            new go.Binding("figure", "figure")),
+                        $(go.TextBlock, textStyle(),
+                            {
+                                margin: 8,
+                                maxSize: new go.Size(160, NaN),
+                                wrap: go.TextBlock.WrapFit,
+                                editable: true,
+                            },
+                            new go.Binding("text").makeTwoWay())
+                    ),
+                    makePort("T", go.Spot.Top, go.Spot.TopSide, false, true),
+                    makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
+                    makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
+                    makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false)
+                ));
+
+            myDiagram.nodeTemplateMap.add("fill_field",
+                $(go.Node, "Table", nodeStyle(),
+                    $(go.Panel, "Auto",
+                        $(go.Shape, "RoundedRectangle",
+                            {fill: "maroon", stroke: "#00a9c9", strokeWidth: 3.5},
+                            new go.Binding("figure", "figure")),
+                        $(go.TextBlock, textStyle(),
+                            {
+                                margin: 8,
+                                maxSize: new go.Size(160, NaN),
+                                wrap: go.TextBlock.WrapFit,
+                                editable: true,
+                            },
+                            new go.Binding("text").makeTwoWay())
+                    ),
+                    makePort("T", go.Spot.Top, go.Spot.TopSide, false, true),
+                    makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
+                    makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
+                    makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false),
+                    {
+                        click: function (event, object) {
+                            if (selectItem !== object.part.data.key) {
+                                document.getElementById("source").value = "";
+                                document.getElementById("object").value = "";
+                            }
+                            selectItem = object.part.data.key;
+                            var elementProperties = Properties.get(selectItem);
+                            if (elementProperties !== undefined) {
+                                document.getElementById("source").value = elementProperties['source'];
+                                document.getElementById("object").value = elementProperties['object'];
+                            }
+                            let display = document.getElementById("propertiesForPushToProgramDiv").style.display;
+                            if (display === 'none') {
+                                document.getElementById("propertiesForPushToProgramDiv").style.display = 'block';
+                                document.getElementById("propertiesForExcelDiv").style.display = 'none';
+                            }
+                        }
+                    }
+                ));
+
+            myDiagram.nodeTemplateMap.add("condition",
+                $(go.Node, "Table", nodeStyle(),
+                    $(go.Panel, "Auto",
+                        $(go.Shape, "Diamond",
+                            {fill: "#282c34", stroke: "#00A9C9", strokeWidth: 3.5},
+                            new go.Binding("figure", "figure")),
+                        $(go.TextBlock, textStyle(),
+                            {
+                                margin: 8,
+                                maxSize: new go.Size(160, NaN),
+                                wrap: go.TextBlock.WrapFit,
+                                editable: true
+                            },
+                            new go.Binding("text").makeTwoWay())
+                    ),
+                    makePort("T", go.Spot.Top, go.Spot.Top, false, true),
+                    makePort("L", go.Spot.Left, go.Spot.Left, true, true),
+                    makePort("R", go.Spot.Right, go.Spot.Right, true, true),
+                    makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false)
+                ));
+
+            myDiagram.nodeTemplateMap.add("Start",
+                $(go.Node, "Table", nodeStyle(),
+                    $(go.Panel, "Spot",
+                        $(go.Shape, "Circle",
+                            {desiredSize: new go.Size(70, 70), fill: "#282c34", stroke: "#09d3ac", strokeWidth: 3.5}),
+                        $(go.TextBlock, "Start", textStyle(),
+                            new go.Binding("text"))
+                    ),
+                    makePort("L", go.Spot.Left, go.Spot.Left, true, false),
+                    makePort("R", go.Spot.Right, go.Spot.Right, true, false),
+                    makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false)
+                ));
+
+            myDiagram.nodeTemplateMap.add("End",
+                $(go.Node, "Table", nodeStyle(),
+                    $(go.Panel, "Spot",
+                        $(go.Shape, "Circle",
+                            {desiredSize: new go.Size(60, 60), fill: "#282c34", stroke: "#DC3C00", strokeWidth: 3.5}),
+                        $(go.TextBlock, "End", textStyle(),
+                            new go.Binding("text"))
+                    ),
+                    makePort("T", go.Spot.Top, go.Spot.Top, false, true),
+                    makePort("L", go.Spot.Left, go.Spot.Left, false, true),
+                    makePort("R", go.Spot.Right, go.Spot.Right, false, true)
+                ));
+
+            go.Shape.defineFigureGenerator("File", function (shape, w, h) {
+                var geo = new go.Geometry();
+                var fig = new go.PathFigure(0, 0, true);
+                geo.add(fig);
+                fig.add(new go.PathSegment(go.PathSegment.Line, .75 * w, 0));
+                fig.add(new go.PathSegment(go.PathSegment.Line, w, .25 * h));
+                fig.add(new go.PathSegment(go.PathSegment.Line, w, h));
+                fig.add(new go.PathSegment(go.PathSegment.Line, 0, h).close());
+                var fig2 = new go.PathFigure(.75 * w, 0, false);
+                geo.add(fig2);
+                fig2.add(new go.PathSegment(go.PathSegment.Line, .75 * w, .25 * h));
+                fig2.add(new go.PathSegment(go.PathSegment.Line, w, .25 * h));
+                geo.spot1 = new go.Spot(0, .25);
+                geo.spot2 = go.Spot.BottomRight;
+                return geo;
+            });
+
+            myDiagram.nodeTemplateMap.add("Comment",
+                $(go.Node, "Auto", nodeStyle(),
+                    $(go.Shape, "File",
+                        {fill: "#282c34", stroke: "#DEE0A3", strokeWidth: 3}),
+                    $(go.TextBlock, textStyle(),
+                        {
+                            margin: 8,
+                            maxSize: new go.Size(200, NaN),
+                            wrap: go.TextBlock.WrapFit,
+                            textAlign: "center",
+                            editable: true
+                        },
+                        new go.Binding("text").makeTwoWay())
+                ));
+
+
+            myDiagram.linkTemplate =
+                $(go.Link,
+                    {
+                        routing: go.Link.AvoidsNodes,
+                        curve: go.Link.JumpOver,
+                        corner: 5, toShortLength: 4,
+                        relinkableFrom: true,
+                        relinkableTo: true,
+                        reshapable: true,
+                        resegmentable: true,
+                        mouseEnter: function (e, link) {
+                            link.findObject("HIGHLIGHT").stroke = "rgba(30,144,255,0.2)";
+                        },
+                        mouseLeave: function (e, link) {
+                            link.findObject("HIGHLIGHT").stroke = "transparent";
+                        },
+                        selectionAdorned: false
+                    },
+                    new go.Binding("points").makeTwoWay(),
+                    $(go.Shape,
+                        {isPanelMain: true, strokeWidth: 8, stroke: "transparent", name: "HIGHLIGHT"}),
+                    $(go.Shape,
+                        {isPanelMain: true, stroke: "gray", strokeWidth: 2},
+                        new go.Binding("stroke", "isSelected", function (sel) {
+                            return sel ? "dodgerblue" : "gray";
+                        }).ofObject()),
+                    $(go.Shape,
+                        {toArrow: "standard", strokeWidth: 0, fill: "gray"}),
+                    $(go.Panel, "Auto",  // the link label, normally not visible
+                        {visible: false, name: "LABEL", segmentIndex: 2, segmentFraction: 0.5},
+                        new go.Binding("visible", "visible").makeTwoWay(),
+                        $(go.Shape, "RoundedRectangle",
+                            {fill: "#F8F8F8", strokeWidth: 0}),
+                        $(go.TextBlock, "Yes",
+                            {
+                                textAlign: "center",
+                                font: "10pt helvetica, arial, sans-serif",
+                                stroke: "#333333",
+                                editable: true
+                            },
+                            new go.Binding("text").makeTwoWay())
+                    )
+                );
+
+            function showLinkLabel(e) {
+                var label = e.subject.findObject("LABEL");
+                if (label !== null) label.visible = (e.subject.fromNode.data.category === "condition");
+            }
+
+            myDiagram.toolManager.linkingTool.temporaryLink.routing = go.Link.Orthogonal;
+            myDiagram.toolManager.relinkingTool.temporaryLink.routing = go.Link.Orthogonal;
+
+            load();
+
+            myPalette =
+                $(go.Palette, "myPaletteDiv",
+                    {
+                        "animationManager.initialAnimationStyle": go.AnimationManager.None,
+                        "InitialAnimationStarting": animateFadeDown,
+
+                        nodeTemplateMap: myDiagram.nodeTemplateMap,
+                        model: new go.GraphLinksModel([
+                            {category: "Start", text: "Начало"},
+                            // {text: "Действие"},
+                            {category: "open_file", text: "Открыть программу"},
+                            {category: "click", text: "Клик"},
+                            {category: "fill_field", text: "Установить значение"},
+                            {category: "condition", text: "Условие"},
+                            {category: "End", text: "Конец"},
+                            {category: "Comment", text: "Комментарий"}
+                        ])
+                    });
+
+            function animateFadeDown(e) {
+                var diagram = e.diagram;
+                var animation = new go.Animation();
+                animation.isViewportUnconstrained = true;
+                animation.easing = go.Animation.EaseOutExpo;
+                animation.duration = 900;
+                animation.add(diagram, 'position', diagram.position.copy().offset(0, 200), diagram.position);
+                animation.add(diagram, 'opacity', 0, 1);
+                animation.start();
+            }
+
+        }
+
+        function save() {
+            var localJson = JSON.parse(myDiagram.model.toJson());
+            Array.from(Properties.keys()).forEach(function (key) {
+                localJson["nodeDataArray"].forEach(function (element) {
+                    if (element.key === key) {
+                        element["property"] = Properties.get(key);
+                    }
+                });
+            });
+            document.getElementById("mySavedModel").value = JSON.stringify(localJson);
+            globalJson = JSON.stringify(localJson);
+        }
+
+        function load() {
+            myDiagram.model = go.Model.fromJson(document.getElementById("mySavedModel").value);
+        }
+
+        function printDiagram() {
+            var svgWindow = window.open();
+            if (!svgWindow) return;
+            var printSize = new go.Size(700, 960);
+            var bnds = myDiagram.documentBounds;
+            var x = bnds.x;
+            var y = bnds.y;
+            while (y < bnds.bottom) {
+                while (x < bnds.right) {
+                    var svg = myDiagram.makeSvg({scale: 1.0, position: new go.Point(x, y), size: printSize});
+                    svgWindow.document.body.appendChild(svg);
+                    x += printSize.width;
+                }
+                x = bnds.x;
+                y += printSize.height;
+            }
+            setTimeout(function () {
+                svgWindow.print();
+            }, 1);
+        }
+
+        function saveProperties() {
+            if (document.getElementById("propertiesForExcelDiv").style.display === 'block') {
+                if (Properties.get('object') !== undefined)
+                    Properties.set(selectItem, {
+                        'file_path': document.getElementById("filePath").value,
+                        'object': Properties.get('object'),
+                        'source': Properties.get('source'),
+                    });
+                else
+                    Properties.set(selectItem, {
+                        'file_path': document.getElementById("filePath").value,
+                    });
+            } else if(document.getElementById("propertiesForPushToProgramDiv").style.display === 'block') {
+                if (Properties.get('file_path') !== undefined)
+                    Properties.set(selectItem, {
+                        'file_path': Properties.get('file_path'),
+                        'object': document.getElementById("object").value,
+                        'source': document.getElementById("source").value
+                    });
+                else
+                    Properties.set(selectItem, {
+                        'object': document.getElementById("object").value,
+                        'source': document.getElementById("source").value
+                    });
+            }
+        }
+
+        function onChangeFilePath(files) {
+            document.getElementById("filePathText").value = document.getElementById("filePath").value;
+        }
+    </script>
+</head>
+<body onload="init()">
+<div id="sample">
+    <div style="width: 100%; display: flex; justify-content: space-between; border: 1px solid black; box-shadow: 0 0 5px rgba(0,0,0,0.5);">
+        <div id="myPaletteDiv" style="width: 300px; margin-right: 2px; background-color: #282c34;"></div>
+        <div id="myDiagramDiv" style="flex-grow: 2; height: 750px;"></div>
+        <div id="propertiesForExcelDiv"
+             style="flex-grow: 1; padding: 5px; display: none;  box-shadow: 0 0 5px rgba(0,0,0,0.5);">
+            <h2>Свойства</h2>
+
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Название</th>
+                    <th scope="col">Значение</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Путь до программы</td>
+                    <td><input type="text" disabled style="font-size: 12pt;" placeholder="Путь до программы" id="filePathText"/><br/>
+                        <input type="file" style="font-size: 12pt;" id="filePath" onchange="onChangeFilePath(this.files)"/></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <button type="button" class="btn btn-secondary" onclick="saveProperties()">Применить</button>
+        </div>
+        <div id="propertiesForPushToProgramDiv"
+             style="flex-grow: 1; height: 750px; padding: 5px; display: none; box-shadow: 0 0 5px rgba(0,0,0,0.5);">
+            <h2>Свойства</h2>
+
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Название</th>
+                    <th scope="col">Значение</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Откуда взять значение</td>
+                    <td><input type="text" style="font-size: 12pt;" placeholder="Ячейка/формула" id="source"/></td>
+                </tr>
+                <tr>
+                    <td>Куда поместить значение</td>
+                    <td><input type="text" style="font-size: 12pt;" placeholder="Поле" id="object"/></td>
+                </tr>
+                </tbody>
+            </table>
+
+            <button type="button" class="btn btn-secondary" onclick="saveProperties()">Применить</button>
+        </div>
+    </div>
+    <center>
+        <button type="button" class="btn btn-primary" id="SaveButton" onclick="save()" style="margin: 15px;">Получить JSON</button>
+        <button type="button" class="btn btn-primary" onclick="load()" style="margin: 15px;">Загрузить из JSON</button>
+        <button type="button" class="btn btn-primary" onclick="printDiagram()">Напечатать</button>
+        <button type="button" class="btn btn-primary" onclick="sendJson()" style="margin: 15px;">Отправить JSON</button>
+    </center>
+    <center><textarea id="mySavedModel" style="width:100%; height:300px;">
+        {"class":"GraphLinksModel","linkFromPortIdProperty":"fromPort","linkToPortIdProperty":"toPort","nodeDataArray":[{"category":"Comment","loc":"360 -10","text":"Перенос доходов из Excel","key":-13},{"key":-1,"category":"Start","loc":"175 0","text":"Старт"},{"key":-2,"category":"End","loc":"175 660","text":"Конец"},{"category":"open_file","text":"Открыть программу","key":-3,"loc":"178 132","property":{"file_path":"C:\\fakepath\\1_37.png"}},{"category":"open_file","text":"Открыть программу","key":-5,"loc":"185 274","property":{"file_path":"C:\\fakepath\\907f1c77-eab2-4393-843b-93d291d56d4a.jpg"}},{"category":"fill_field","text":"Установить значение","key":-6,"loc":"60 393","property":{"object":"Приход","source":"A2B3"}},{"category":"condition","text":"Условие","key":-7,"loc":"324 371"},{"category":"fill_field","text":"Установить значение","key":-8,"loc":"319 533"},{"category":"click","text":"Клик","key":-4,"loc":"68 555"}],"linkDataArray":[{"from":-1,"to":-3,"fromPort":"B","toPort":"T","points":[175,36.75,175,46.75,175,75.5311378479004,178,75.5311378479004,178,104.31227569580078,178,114.31227569580078]},{"from":-3,"to":-5,"fromPort":"B","toPort":"T","points":[178,149.6877243041992,178,159.6877243041992,178,203,185,203,185,246.3122756958008,185,256.3122756958008]},{"from":-5,"to":-7,"fromPort":"B","toPort":"T","points":[185,291.6877243041992,185,301.6877243041992,185,314.53113784790037,324,314.53113784790037,324,327.3745513916016,324,337.3745513916016]},{"from":-6,"to":-8,"fromPort":"B","toPort":"T","points":[60,413.4491480533532,60,423.4491480533532,60,463,319,463,319,502.55085194664684,319,512.5508519466468]},{"from":-7,"to":-6,"fromPort":"B","toPort":"T","visible":true,"points":[324,404.6254486083985,324,414.6254486083985,197.15450795611994,414.6254486083985,197.15450795611994,362.55085194664684,59.999999999999986,362.55085194664684,59.999999999999986,372.55085194664684],"text":"Yes"},{"from":-8,"to":-4,"fromPort":"B","toPort":"T","points":[319,553.4491480533532,319,563.4491480533532,168.83339102572847,563.4491480533532,168.83339102572847,520.0847030462221,68,520.0847030462221,68,530.0847030462221]},{"from":-4,"to":-2,"fromPort":"B","toPort":"T","points":[68,579.915296953778,68,589.915296953778,68,604.0826484768891,175,604.0826484768891,175,618.25,175,628.25]}]}
+    </textarea></center>
+</div>
+</body>
+</html>

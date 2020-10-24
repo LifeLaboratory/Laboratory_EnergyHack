@@ -11,7 +11,7 @@ class GenerateCode:
             'open_file': self._open_file,
             'condition': self._condition,
             'click': self._click,
-            'save_value': self._save_value,
+            'fill_field': self._fill_field,
             'cycle': self._cycle,
         }
         self.excel = False
@@ -38,7 +38,7 @@ class Excel:
         :return:
         """
         for operation in struct:
-            self.operations[operation.get('action')](operation, indent, iterator)
+            self.operations[operation.get('category')](operation, indent, iterator)
         return '\n'.join(self.code)
 
     def create_file(self, struct):
@@ -78,7 +78,8 @@ class Excel:
         :return:
         """
         self.code.append(f'''{' '*indent}if {operation.get('value')}:''')
-        self.code.append(f'''{' '*(indent+4)}raise Exception('Не правильно заполнено поле')''')
+        # self.code.append(f'''{' '*(indent+4)}raise Exception('Не правильно заполнено поле')''')
+        self.create_code(operation.get('if'), indent+4, iterator)
 
     def _click(self, operation, indent, iterator=None):
         """
@@ -92,7 +93,7 @@ class Excel:
         self.code.append(f'''{' ' * indent}acdp = acmw[u'{operation.get('object')}']''')
         self.code.append(f'''{' ' * indent}acdp.Click()''')
 
-    def _save_value(self, operation, indent, iterator=None):
+    def _fill_field(self, operation, indent, iterator=None):
         """
         Формирование установки значения
         :param operation:
