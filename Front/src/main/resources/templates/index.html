@@ -13,21 +13,6 @@
 
         var globalJson = {};
 
-        function sendJson() {
-            $.ajax({
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                dataType: 'json',
-                type: 'POST',
-                url: 'http://90.189.213.170:13452/api/source',
-                data: globalJson,
-                success: function(result){
-                    console.log(result);
-                }
-            });
-        }
-
         var Properties = new Map();
         var selectItem = 0;
 
@@ -443,8 +428,69 @@
         function onChangeFilePath(files) {
             document.getElementById("filePathText").value = document.getElementById("filePath").value;
         }
+
+        function sendJson() {
+            document.getElementsByClassName("lds-facebook")[0].style.display = 'block';
+            save();
+            $.ajax({
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                dataType: 'json',
+                type: 'POST',
+                url: 'http://90.189.213.170:13452/api/source',
+                data: globalJson,
+                success: function(result){
+                    document.getElementById("exeFile").setAttribute('href', 'http://90.189.213.170:13452/' + result["file"]);
+                    document.getElementById("exeFile").style.display = 'block';
+                    document.getElementsByClassName("lds-facebook")[0].style.display = 'none';
+                },
+                error: function(error) {
+                    document.getElementById("exeFile").style.display = 'none';
+                    document.getElementsByClassName("lds-facebook")[0].style.display = 'none';
+                }
+            });
+        }
     </script>
 </head>
+<style>
+    .lds-facebook {
+        display: inline-block;
+        position: relative;
+        width: 80px;
+        height: 80px;
+    }
+    .lds-facebook div {
+        display: inline-block;
+        position: absolute;
+        left: 8px;
+        width: 16px;
+        background: #000;
+        animation: lds-facebook 1.2s cubic-bezier(0, 0.5, 0.5, 1) infinite;
+    }
+    .lds-facebook div:nth-child(1) {
+        left: 8px;
+        animation-delay: -0.24s;
+    }
+    .lds-facebook div:nth-child(2) {
+        left: 32px;
+        animation-delay: -0.12s;
+    }
+    .lds-facebook div:nth-child(3) {
+        left: 56px;
+        animation-delay: 0;
+    }
+    @keyframes lds-facebook {
+        0% {
+            top: 8px;
+            height: 64px;
+        }
+        50%, 100% {
+            top: 24px;
+            height: 32px;
+        }
+    }
+</style>
 <body onload="init()">
 <div id="sample">
     <div style="width: 100%; display: flex; justify-content: space-between; border: 1px solid black; box-shadow: 0 0 5px rgba(0,0,0,0.5);">
@@ -503,9 +549,11 @@
         <button type="button" class="btn btn-primary" onclick="load()" style="margin: 15px;">Загрузить из JSON</button>
         <button type="button" class="btn btn-primary" onclick="printDiagram()">Напечатать</button>
         <button type="button" class="btn btn-primary" onclick="sendJson()" style="margin: 15px;">Отправить JSON</button>
+        <div class="lds-facebook" style="display: none;"><div></div><div></div><div></div></div>
+        <a id="exeFile" style="display: none; margin: 10px;">Ссылка на исполняемых файл</a>
     </center>
     <center><textarea id="mySavedModel" style="width:100%; height:300px;">
-        {"class":"GraphLinksModel","linkFromPortIdProperty":"fromPort","linkToPortIdProperty":"toPort","nodeDataArray":[{"category":"Comment","loc":"360 -10","text":"Перенос доходов из Excel","key":-13},{"key":-1,"category":"Start","loc":"175 0","text":"Старт"},{"key":-2,"category":"End","loc":"175 660","text":"Конец"},{"category":"open_file","text":"Открыть программу","key":-3,"loc":"178 132","property":{"file_path":"C:\\fakepath\\1_37.png"}},{"category":"open_file","text":"Открыть программу","key":-5,"loc":"185 274","property":{"file_path":"C:\\fakepath\\907f1c77-eab2-4393-843b-93d291d56d4a.jpg"}},{"category":"fill_field","text":"Установить значение","key":-6,"loc":"60 393","property":{"object":"Приход","source":"A2B3"}},{"category":"condition","text":"Условие","key":-7,"loc":"324 371"},{"category":"fill_field","text":"Установить значение","key":-8,"loc":"319 533"},{"category":"click","text":"Клик","key":-4,"loc":"68 555"}],"linkDataArray":[{"from":-1,"to":-3,"fromPort":"B","toPort":"T","points":[175,36.75,175,46.75,175,75.5311378479004,178,75.5311378479004,178,104.31227569580078,178,114.31227569580078]},{"from":-3,"to":-5,"fromPort":"B","toPort":"T","points":[178,149.6877243041992,178,159.6877243041992,178,203,185,203,185,246.3122756958008,185,256.3122756958008]},{"from":-5,"to":-7,"fromPort":"B","toPort":"T","points":[185,291.6877243041992,185,301.6877243041992,185,314.53113784790037,324,314.53113784790037,324,327.3745513916016,324,337.3745513916016]},{"from":-6,"to":-8,"fromPort":"B","toPort":"T","points":[60,413.4491480533532,60,423.4491480533532,60,463,319,463,319,502.55085194664684,319,512.5508519466468]},{"from":-7,"to":-6,"fromPort":"B","toPort":"T","visible":true,"points":[324,404.6254486083985,324,414.6254486083985,197.15450795611994,414.6254486083985,197.15450795611994,362.55085194664684,59.999999999999986,362.55085194664684,59.999999999999986,372.55085194664684],"text":"Yes"},{"from":-8,"to":-4,"fromPort":"B","toPort":"T","points":[319,553.4491480533532,319,563.4491480533532,168.83339102572847,563.4491480533532,168.83339102572847,520.0847030462221,68,520.0847030462221,68,530.0847030462221]},{"from":-4,"to":-2,"fromPort":"B","toPort":"T","points":[68,579.915296953778,68,589.915296953778,68,604.0826484768891,175,604.0826484768891,175,618.25,175,628.25]}]}
+        {"class":"GraphLinksModel","linkFromPortIdProperty":"fromPort","linkToPortIdProperty":"toPort","nodeDataArray":[{"category":"Comment","loc":"360 -10","text":"Перенос доходов из Excel","key":-13},{"key":-1,"category":"Start","loc":"175 0","text":"Старт"},{"key":-2,"category":"End","loc":"175 660","text":"Конец"},{"category":"open_file","text":"Открыть программу","key":-3,"loc":"178 132","property":{"file_path":"C:\\fakepath\\1_37.png"}},{"category":"open_file","text":"Открыть программу","key":-5,"loc":"185 274","property":{"file_path":"C:\\fakepath\\907f1c77-eab2-4393-843b-93d291d56d4a.jpg"}},{"category":"fill_field","text":"Установить значение","key":-6,"loc":"221 393","property":{"object":"Приход","source":"A2B3"}},{"category":"fill_field","text":"Установить значение","key":-8,"loc":"319 533"}],"linkDataArray":[{"from":-1,"to":-3,"fromPort":"B","toPort":"T","points":[175,36.75,175,46.75,175,75.5311378479004,178,75.5311378479004,178,104.31227569580078,178,114.31227569580078]},{"from":-3,"to":-5,"fromPort":"B","toPort":"T","points":[178,149.6877243041992,178,159.6877243041992,178,203,185,203,185,246.3122756958008,185,256.3122756958008]},{"from":-6,"to":-8,"fromPort":"B","toPort":"T","points":[221.00000000000003,413.4491480533532,221.00000000000003,423.4491480533532,221.00000000000003,463,319,463,319,502.55085194664684,319,512.5508519466468]},{"from":-5,"to":-6,"fromPort":"B","toPort":"T","points":[185,291.6877243041992,185,301.6877243041992,185,332.11928812542305,221.00000000000003,332.11928812542305,221.00000000000003,362.55085194664684,221.00000000000003,372.55085194664684]},{"from":-8,"to":-2,"fromPort":"B","toPort":"T","points":[319,553.4491480533532,319,563.4491480533532,319,590.8495740266766,175,590.8495740266766,175,618.25,175,628.25]}]}
     </textarea></center>
 </div>
 </body>
