@@ -52,7 +52,7 @@ class Excel:
         with open(f'code/{file_name}.py', 'w', encoding='windows-1251') as f:
             f.write(code)
         call(f'pyinstaller --onefile code/{file_name}.py', shell=True)
-        return f'dist/{file_name}.exe'
+        return f'generator/dist/{file_name}.exe'
 
     def _open_file(self, operation, indent, iterator=None):
         """

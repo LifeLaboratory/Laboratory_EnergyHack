@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_file
 from app import app
 from app.source.processor import Processor
 from app.base.helper import header_option
@@ -13,4 +13,9 @@ def login():
         return jsonify({}), header_option()
     data = request.json
     print(f'data = {data}')
-    return jsonify(Processor().create_file()), header_option()
+    file = Processor().create_file(data)
+    return send_file(file,
+                     mimetype='exe',
+                     attachment_filename='example.exe',
+                     as_attachment=True)\
+        , header_option()

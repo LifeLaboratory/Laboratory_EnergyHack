@@ -1,5 +1,5 @@
 from json import loads
-from app.generator import GenerateCode
+from app.generator.creator import GenerateCode
 
 
 def get_code(struct):

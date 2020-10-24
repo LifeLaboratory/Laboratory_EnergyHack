@@ -1,1 +1,1 @@
-from .creator import GenerateCode
+from .view import get_code
