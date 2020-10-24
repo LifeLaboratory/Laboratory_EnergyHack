@@ -14,7 +14,7 @@ def get_nda_data_by_action(nda, category):
 
 
 def get_property(nda_item, key):
-    if is_propery_exists(nda_item):
+    if is_property_exists(nda_item):
         property = nda_item.get('property')
         return property.get(key)
 

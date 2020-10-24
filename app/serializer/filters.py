@@ -34,5 +34,5 @@ def is_fill_field(item):
 def is_category_exists(item):
     return item.get('category')
 
-def is_propery_exists(item):
+def is_property_exists(item):
     return 'property' in item
