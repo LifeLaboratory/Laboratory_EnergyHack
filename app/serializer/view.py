@@ -11,11 +11,16 @@ def get_click_fields(nda_item):
 
 
 def get_fill_field_fields(nda_item):
-    return {
-        'object': get_property(nda_item, 'object'),
-        'value': get_property(nda_item, 'value'),
-        'source': get_property(nda_item, 'source')
-    }
+    object = get_property(nda_item, 'object')
+    value = get_property(nda_item, 'value')
+    source = get_property(nda_item, 'source')
+    data = {'object': object}
+    if value:
+        data.update({'value': value})
+
+    if source:
+        data.update({'source': source})
+    return data
 
 
 def get_condition_fields(nda_item):
