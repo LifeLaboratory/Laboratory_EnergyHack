@@ -1,8 +1,9 @@
-# -*- coding: windows-1251 -*-
-"""Модуль для генерации кода по входным правилам"""
+# -*- coding: utf-8 -*-
+"""РњРѕРґСѓР»СЊ РґР»СЏ РіРµРЅРµСЂР°С†РёРё РєРѕРґР° РїРѕ РІС…РѕРґРЅС‹Рј РїСЂР°РІРёР»Р°Рј"""
 from string import ascii_letters
 from random import choice
 from subprocess import call
+import os
 
 
 class GenerateCode:
@@ -14,7 +15,7 @@ class GenerateCode:
             'fill_field': self._fill_field,
             'cycle': self._cycle,
         }
-        self.excel = False
+        self.excel = True
         self.code = [
             'from pywinauto.application import Application'
             '''
@@ -31,7 +32,7 @@ class Excel:
 
     def create_code(self, struct, indent=0, iterator=None):
         """
-        Формирование кода по входной структуре
+        Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РєРѕРґР° РїРѕ РІС…РѕРґРЅРѕР№ СЃС‚СЂСѓРєС‚СѓСЂРµ
         :param struct:
         :param indent:
         :param iterator:
@@ -43,20 +44,23 @@ class Excel:
 
     def create_file(self, struct):
         """
-        Метод для формирования exe файла по сформированному коду
+        РњРµС‚РѕРґ РґР»СЏ С„РѕСЂРјРёСЂРѕРІР°РЅРёСЏ exe С„Р°Р№Р»Р° РїРѕ СЃС„РѕСЂРјРёСЂРѕРІР°РЅРЅРѕРјСѓ РєРѕРґСѓ
         :param struct:
         :return:
         """
         code = self.create_code(struct)
         file_name = ''.join([choice(ascii_letters) for _ in range(15)])
-        with open(f'code/{file_name}.py', 'w', encoding='windows-1251') as f:
-            f.write(code)
-        call(f'pyinstaller --onefile code/{file_name}.py', shell=True)
-        return f'generator/dist/{file_name}.exe'
+        abspath = os.path.abspath(os.path.dirname(__file__))
+        with open(os.path.join(abspath, f'code\\{file_name}.py'), 'wb') as f:
+            f.write(code.encode())
+        file_py = os.path.join(abspath, f'code\\{file_name}.py')
+        call(f'pyinstaller --onefile {file_py} -n task_{file_name}.exe', shell=True)
+        os.remove(f'task_{file_name}.exe.spec')
+        return f'task_{file_name}.exe'
 
     def _open_file(self, operation, indent, iterator=None):
         """
-        Формирование открытия файла
+        Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РѕС‚РєСЂС‹С‚РёСЏ С„Р°Р№Р»Р°
         :param operation:
         :param indent:
         :param iterator:
@@ -71,19 +75,19 @@ class Excel:
 
     def _condition(self, operation, indent, iterator=None):
         """
-        Формирование условий
+        Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СѓСЃР»РѕРІРёР№
         :param operation:
         :param indent:
         :param iterator:
         :return:
         """
         self.code.append(f'''{' '*indent}if {operation.get('value')}:''')
-        # self.code.append(f'''{' '*(indent+4)}raise Exception('Не правильно заполнено поле')''')
-        self.create_code(operation.get('if'), indent+4, iterator)
+        self.code.append(f'''{' '*(indent+4)}raise Exception('РќРµ РїСЂР°РІРёР»СЊРЅРѕ Р·Р°РїРѕР»РЅРµРЅРѕ РїРѕР»Рµ')''')
+        # self.create_code(operation.get('if'), indent+4, iterator)
 
     def _click(self, operation, indent, iterator=None):
         """
-        Формирование клика
+        Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ РєР»РёРєР°
         :param operation:
         :param indent:
         :param iterator:
@@ -95,7 +99,7 @@ class Excel:
 
     def _fill_field(self, operation, indent, iterator=None):
         """
-        Формирование установки значения
+        Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ СѓСЃС‚Р°РЅРѕРІРєРё Р·РЅР°С‡РµРЅРёСЏ
         :param operation:
         :param indent:
         :param iterator:
@@ -103,7 +107,7 @@ class Excel:
         """
         if operation.get('source'):
             if not self.excel:
-                raise Exception('Не задан EXCEL файл')
+                raise Exception('РќРµ Р·Р°РґР°РЅ EXCEL С„Р°Р№Р»')
             self.code.append(f'''{' ' * indent}param = excel.get_value('{operation.get('source')}{str(iterator) if iterator else ''}')''')
             self.code.append(f'''{' ' * indent}acmw[u'{operation.get('object')}'].set_text(param)''')
         elif operation.get('value'):
@@ -111,7 +115,7 @@ class Excel:
 
     def _cycle(self, operation, indent, iterator=None):
         """
-        Формирование циклов
+        Р¤РѕСЂРјРёСЂРѕРІР°РЅРёРµ С†РёРєР»РѕРІ
         :param operation:
         :param indent:
         :param iterator:
