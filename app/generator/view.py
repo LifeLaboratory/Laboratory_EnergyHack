@@ -11,6 +11,15 @@ def get_code(struct):
     return GenerateCode().create_code(struct)
 
 
+def get_file(struct):
+    """
+    Публичный метод для построения кода по правилам и формирования exe
+    :param struct:
+    :return:
+    """
+    return GenerateCode().create_file(struct)
+
+
 data = loads('''
 [
   {"name": "open", "action": "open_file", "file_path": "C:\\tmp"},

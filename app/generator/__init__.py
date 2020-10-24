@@ -1,1 +1,1 @@
-from .view import get_code
+from .view import (get_code, get_file)

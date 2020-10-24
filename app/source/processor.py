@@ -1,5 +1,6 @@
 from app.serializer.controller import serialize
-from app.generator import get_code
+from app.generator import get_code, get_file
+from json import dumps
 
 
 class Processor:
@@ -9,5 +10,6 @@ class Processor:
         :return:
         """
         struct = serialize(data)
-        file = get_code(struct)
-        return {'file': file}
+        print(dumps(struct))
+        file = get_file(struct)
+        return {'file': f'dist/{file}'}
