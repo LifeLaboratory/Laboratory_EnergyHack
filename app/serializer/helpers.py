@@ -1,4 +1,5 @@
 import json
+from app.serializer.filters import *
 
 
 def get_json():
@@ -6,18 +7,20 @@ def get_json():
         return json.loads(f.read())
 
 
-def get_nda_data_by_action(nda, action):
+def get_nda_data_by_action(nda, category):
     for item in nda:
-        if item.get('action') == action:
+        if item.get('category') == category:
             return item
 
 
-def get_field_from_nda(nda_item, key):
-    return nda_item.get(key)
+def get_property(nda_item, key):
+    if is_propery_exists(nda_item):
+        property = nda_item.get('property')
+        return property.get(key)
 
 
-def get_action_by_id(node_data_array, action_id):
+def get_action_by_id(node_data_array, category_id):
     nda_key = node_data_array
     for item in nda_key:
-        if action_id == item.get('key'):
-            return item['action']
+        if category_id == item.get('key'):
+            return item['category']
