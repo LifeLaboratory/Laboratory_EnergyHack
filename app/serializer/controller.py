@@ -39,7 +39,7 @@ def serialize(data):
             new_item.update(get_fill_field_fields(nda_item))
 
         structure.append(new_item)
-    print(structure)
+    return structure
 
 
 if __name__ == '__main__':
