@@ -128,6 +128,7 @@
                             if (display === 'none') {
                                 document.getElementById("propertiesForPushToProgramDiv").style.display = 'none';
                                 document.getElementById("propertiesForExcelDiv").style.display = 'block';
+                                document.getElementById("propertiesForClickDiv").style.display = 'none';
                             }
                         }
                     }
@@ -162,7 +163,7 @@
                             if (elementProperties !== undefined) {
                                 document.getElementById("objectClick").value = elementProperties['object'];
                             }
-                            let display = document.getElementById("propertiesForPushToProgramDiv").style.display;
+                            let display = document.getElementById("propertiesForClickDiv").style.display;
                             if (display === 'none') {
                                 document.getElementById("propertiesForPushToProgramDiv").style.display = 'none';
                                 document.getElementById("propertiesForExcelDiv").style.display = 'none';
@@ -455,7 +456,7 @@
         }
 
         function onChangeFilePath(files) {
-            document.getElementById("filePathText").value = document.getElementById("filePath").value;
+            document.getElementById("filePathText").value = files[0].name;
         }
 
         function sendJson() {
@@ -580,8 +581,6 @@
                             <option value="">Выберете поля для вставки</option>
                             <option value="AC-E1">Сумма</option>
                             <option value="AC-E2">Примечание</option>
-                            <option value="AC-BC1">Тип операции "приход"</option>
-                            <option value="AC-BC7">Состояние операции "не выполнена"</option>
                         </select>
                     </td>
                 </tr>
@@ -611,7 +610,12 @@
                         <select class="custom-select" required id="objectClick" style="font-size: 12pt;">
                             <option value="">Выберете элемент</option>
                             <option value="AC-BC1">Тип операции "приход"</option>
+                            <option value="AC-BC2">Тип операции "расход"</option>
                             <option value="AC-BC7">Состояние операции "не выполнена"</option>
+                            <option value="AC-BC5">Состояние операции "выполнена"</option>
+                            <option value="AC-BC11">Кнопка "добавить"</option>
+                            <option value="Просмотр->Операции  Alt+2 ">Меню "Операции"</option>
+                            <option value="Действия->Добавить Insert">Меню "Добавить"</option>
                         </select>
                     </td>
                 </tr>
