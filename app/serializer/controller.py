@@ -7,6 +7,18 @@ def serialize(data):
     link_data_array = data.get('linkDataArray')
     node_data_array = data.get('nodeDataArray')
 
+    operation = {}
+    for item in link_data_array:
+        key = item.get('from')
+        value = item.get('to')
+        operation[key] = value
+
+    position = operation[-1]
+    result_sort = [position]
+    while operation[position] != -2:
+        position = operation[position]
+        result_sort.append(position)
+
     for item in link_data_array:
         if is_denied_action(item):
             continue

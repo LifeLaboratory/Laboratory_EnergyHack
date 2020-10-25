@@ -1,14 +1,18 @@
 from pywinauto.application import Application
 
 app = Application().Start(cmd_line=u'"B:\\Program Files (x86)\\AbilityCash\\AbilityCash.exe" ')
-acmw = app[u'AC-MW']
-acmw.Wait('ready')
-menu_item = acmw.MenuItem(u'\u041f\u0440\u043e\u0441\u043c\u043e\u0442\u0440->&2 \u041e\u043f\u0435\u0440\u0430\u0446\u0438\u0438\tAlt+2')
-menu_item.Click()
-menu_item2 = acmw.MenuItem(u'\u0414\u0435\u0439\u0441\u0442\u0432\u0438\u044f->\u0414\u043e\u0431\u0430\u0432\u0438\u0442\u044c\tInsert')
-menu_item2.Click()
-window = app.Dialog
-acrd = window[u'7']
-acrd.MoveMouse()
-acrd.Click()
-pass
+
+menu_item = app[u'AC-MW'].MenuItem(u'Просмотр->Операции  Alt+2').Click()
+
+menu_item2 = app[u'AC-MW'].MenuItem(u'Действия->Добавить Insert').Click()
+
+window = app.Dialog  # <--- Переход к работе с диалогом
+window[u'AC-BC'].Click()  # <--- Приход
+window[u'AC-BC7'].Click()  # <--- Не выполнена
+# window[u'AC-BC5'].Click()  # <--- выполнена
+# window[u'AC-BC2'].Click()  # <--- Расход
+window[u'AC-E'].type_keys('10.00')  # <--- Установить значение в ячейку
+window[u'AC-E2'].type_keys('ВСТАВИЛ ЗНАЧЕНИЕ!')  # <--- Установить значение в ячейку
+window[u'AC-BC11'].Click()  # <--- Кнопка Добавить
+
+app.Kill_()

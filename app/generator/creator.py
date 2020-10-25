@@ -15,7 +15,8 @@ class GenerateCode:
             'fill_field': self._fill_field,
             'cycle': self._cycle,
         }
-        self.excel = True
+        self.excel = False
+        self.prefix = ''
         self.code = [
             'from pywinauto.application import Application'
             '''
@@ -66,7 +67,7 @@ class Excel:
         :param iterator:
         :return:
         """
-        if 'xls' in operation.get('file_path'):
+        if 'xls' in operation.get('file_path') or 'xlsx' in operation.get('file_path'):
             self.code.append(f'''{' '*indent}excel = Excel("{operation.get('file_path')}")''')
             self.excel = True
         else:
@@ -94,7 +95,12 @@ class Excel:
         :return:
         """
         self.code.append(f'''{' ' * indent}acmw.Wait('ready')''')
-        self.code.append(f'''{' ' * indent}acdp = acmw[u'{operation.get('object')}']''')
+        if '->' in operation.get('object'):
+            self.code.append(f'''{' ' * indent}acdp = app[u'AC-MW'].MenuItem(u'{operation.get('object')}')''')
+            if 'Insert' in operation.get('object'):
+                self.prefix = '.Dialog'
+        else:
+            self.code.append(f'''{' ' * indent}acdp = app[u'{operation.get('object')}']''')
         self.code.append(f'''{' ' * indent}acdp.Click()''')
 
     def _fill_field(self, operation, indent, iterator=None):
@@ -109,9 +115,9 @@ class Excel:
             if not self.excel:
                 raise Exception('Не задан EXCEL файл')
             self.code.append(f'''{' ' * indent}param = excel.get_value('{operation.get('source')}{str(iterator) if iterator else ''}')''')
-            self.code.append(f'''{' ' * indent}acmw[u'{operation.get('object')}'].set_text(param)''')
+            self.code.append(f'''{' ' * indent}app{self.prefix}[u'{operation.get('object')}'].type_keys(param)''')
         elif operation.get('value'):
-            self.code.append(f'''{' ' * indent}acmw[u'{operation.get('object')}'].set_text('{operation.get('value')}')''')
+            self.code.append(f'''{' ' * indent}app[u'{operation.get('object')}'].type_keys('{operation.get('value')}')''')
 
     def _cycle(self, operation, indent, iterator=None):
         """
