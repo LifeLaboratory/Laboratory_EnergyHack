@@ -1,6 +1,6 @@
-def is_denied_action(item):
+def is_denied_action(action_key):
     denied_actions = [-1, -2]
-    return item['to'] in denied_actions
+    return action_key in denied_actions
 
 
 def is_open_program_action(item):

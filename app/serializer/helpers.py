@@ -24,3 +24,19 @@ def get_action_by_id(node_data_array, category_id):
     for item in nda_key:
         if category_id == item.get('key'):
             return item['category']
+
+
+def get_graph_route(link_data_array):
+    operation = {}
+    for item in link_data_array:
+        key = item.get('from')
+        value = item.get('to')
+        operation[key] = value
+
+    position = operation[-1]
+    result_sort = [position]
+    while operation[position] != -2:
+        position = operation[position]
+        result_sort.append(position)
+    return result_sort
+

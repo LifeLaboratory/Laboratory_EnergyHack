@@ -7,23 +7,10 @@ def serialize(data):
     link_data_array = data.get('linkDataArray')
     node_data_array = data.get('nodeDataArray')
 
-    operation = {}
-    for item in link_data_array:
-        key = item.get('from')
-        value = item.get('to')
-        operation[key] = value
-
-    position = operation[-1]
-    result_sort = [position]
-    while operation[position] != -2:
-        position = operation[position]
-        result_sort.append(position)
-
-    for item in link_data_array:
-        if is_denied_action(item):
+    for action_key in get_graph_route(link_data_array):
+        if is_denied_action(action_key):
             continue
 
-        action_key = item.get('to')
         new_item = {"category": get_action_by_id(node_data_array, action_key)}
         nda_item = get_nda_data_by_action(node_data_array, action_key)
 
