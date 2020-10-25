@@ -128,6 +128,7 @@
                             if (display === 'none') {
                                 document.getElementById("propertiesForPushToProgramDiv").style.display = 'none';
                                 document.getElementById("propertiesForExcelDiv").style.display = 'block';
+                                document.getElementById("propertiesForClickDiv").style.display = 'none';
                             }
                         }
                     }
@@ -151,7 +152,25 @@
                     makePort("T", go.Spot.Top, go.Spot.TopSide, false, true),
                     makePort("L", go.Spot.Left, go.Spot.LeftSide, true, true),
                     makePort("R", go.Spot.Right, go.Spot.RightSide, true, true),
-                    makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false)
+                    makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false),
+                    {
+                        click: function (event, object) {
+                            if (selectItem !== object.part.data.key) {
+                                document.getElementById("objectClick").value = "";
+                            }
+                            selectItem = object.part.data.key;
+                            var elementProperties = Properties.get(selectItem);
+                            if (elementProperties !== undefined) {
+                                document.getElementById("objectClick").value = elementProperties['object'];
+                            }
+                            let display = document.getElementById("propertiesForClickDiv").style.display;
+                            if (display === 'none') {
+                                document.getElementById("propertiesForPushToProgramDiv").style.display = 'none';
+                                document.getElementById("propertiesForExcelDiv").style.display = 'none';
+                                document.getElementById("propertiesForClickDiv").style.display = 'block';
+                            }
+                        }
+                    }
                 ));
 
             myDiagram.nodeTemplateMap.add("fill_field",
@@ -189,6 +208,7 @@
                             if (display === 'none') {
                                 document.getElementById("propertiesForPushToProgramDiv").style.display = 'block';
                                 document.getElementById("propertiesForExcelDiv").style.display = 'none';
+                                document.getElementById("propertiesForClickDiv").style.display = 'none';
                             }
                         }
                     }
@@ -423,10 +443,20 @@
                         'source': document.getElementById("source").value
                     });
             }
+            if (document.getElementById("propertiesForClickDiv").style.display === 'block') {
+                if (Properties.get(selectItem) !== undefined)
+                    Properties.set(selectItem, {
+                        'object': Properties.get(selectItem).get('object'),
+                    });
+                else
+                    Properties.set(selectItem, {
+                        'object': document.getElementById("objectClick").value,
+                    });
+            }
         }
 
         function onChangeFilePath(files) {
-            document.getElementById("filePathText").value = document.getElementById("filePath").value;
+            document.getElementById("filePathText").value = files[0].name;
         }
 
         function sendJson() {
@@ -498,6 +528,10 @@
         <div id="myDiagramDiv" style="flex-grow: 2; height: 750px;"></div>
         <div id="propertiesForExcelDiv"
              style="flex-grow: 1; padding: 5px; display: none;  box-shadow: 0 0 5px rgba(0,0,0,0.5);">
+            <font style="float: right; right: 0; color: gray; cursor: pointer;"
+                  onclick="document.getElementById('propertiesForExcelDiv').style.display='none';">
+                Закрыть
+            </font>
             <h2>Свойства</h2>
 
             <table class="table">
@@ -511,7 +545,8 @@
                 <tr>
                     <td>Путь до программы</td>
                     <td><input type="text" disabled style="font-size: 12pt;" placeholder="Путь до программы" id="filePathText"/><br/>
-                        <input type="file" style="font-size: 12pt;" id="filePath" onchange="onChangeFilePath(this.files)"/></td>
+                        <input type="file" style="font-size: 12pt;" id="filePath" onchange="onChangeFilePath(this.files)"/>
+                    </td>
                 </tr>
                 </tbody>
             </table>
@@ -520,6 +555,10 @@
         </div>
         <div id="propertiesForPushToProgramDiv"
              style="flex-grow: 1; height: 750px; padding: 5px; display: none; box-shadow: 0 0 5px rgba(0,0,0,0.5);">
+            <font style="float: right; right: 0; color: gray; cursor: pointer;"
+                  onclick="document.getElementById('propertiesForPushToProgramDiv').style.display='none';">
+                Закрыть
+            </font>
             <h2>Свойства</h2>
 
             <table class="table">
@@ -536,7 +575,49 @@
                 </tr>
                 <tr>
                     <td>Куда поместить значение</td>
-                    <td><input type="text" style="font-size: 12pt;" placeholder="Поле" id="object"/></td>
+                    <td>
+<!--                        <input type="text" style="font-size: 12pt;" placeholder="Поле" id="object"/>-->
+                        <select class="custom-select" required id="object" style="font-size: 12pt;">
+                            <option value="">Выберете поля для вставки</option>
+                            <option value="AC-E1">Сумма</option>
+                            <option value="AC-E2">Примечание</option>
+                        </select>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+            <button type="button" class="btn btn-secondary" onclick="saveProperties()">Применить</button>
+        </div>
+        <div id="propertiesForClickDiv"
+             style="flex-grow: 1; height: 750px; padding: 5px; display: none; box-shadow: 0 0 5px rgba(0,0,0,0.5);">
+            <font style="float: right; right: 0; color: gray; cursor: pointer;"
+                  onclick="document.getElementById('propertiesForClickDiv').style.display='none';">
+                Закрыть
+            </font>
+            <h2>Свойства</h2>
+            <table class="table">
+                <thead class="thead-dark">
+                <tr>
+                    <th scope="col">Название</th>
+                    <th scope="col">Значение</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>Элемент</td>
+                    <td>
+                        <select class="custom-select" required id="objectClick" style="font-size: 12pt;">
+                            <option value="">Выберете элемент</option>
+                            <option value="AC-BC1">Тип операции "приход"</option>
+                            <option value="AC-BC2">Тип операции "расход"</option>
+                            <option value="AC-BC7">Состояние операции "не выполнена"</option>
+                            <option value="AC-BC5">Состояние операции "выполнена"</option>
+                            <option value="AC-BC11">Кнопка "добавить"</option>
+                            <option value="Просмотр->Операции  Alt+2 ">Меню "Операции"</option>
+                            <option value="Действия->Добавить Insert">Меню "Добавить"</option>
+                        </select>
+                    </td>
                 </tr>
                 </tbody>
             </table>
