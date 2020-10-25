@@ -235,6 +235,41 @@
                     makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false)
                 ));
 
+            go.Shape.defineFigureGenerator("Cycle", function (shape, w, h) {
+                var geo = new go.Geometry();
+                var fig = new go.PathFigure(.25 * w, 0, true);
+                geo.add(fig);
+                fig.add(new go.PathSegment(go.PathSegment.Line, .75 * w, 0));
+                fig.add(new go.PathSegment(go.PathSegment.Line, w, .5 * h));
+                fig.add(new go.PathSegment(go.PathSegment.Line, .75 * w, h));
+                fig.add(new go.PathSegment(go.PathSegment.Line, .25 * w, h));
+                fig.add(new go.PathSegment(go.PathSegment.Line, 0, .5 * h));
+                fig.add(new go.PathSegment(go.PathSegment.Line, .25 * w, 0).close());
+                geo.spot2 = go.Spot.BottomRight;
+                return geo;
+            });
+
+            myDiagram.nodeTemplateMap.add("cycle",
+                $(go.Node, "Table", nodeStyle(),
+                    $(go.Panel, "Auto",
+                        $(go.Shape, "Cycle",
+                            {fill: "#282c34", stroke: "#00A9C9", strokeWidth: 3.5},
+                            new go.Binding("figure", "figure")),
+                        $(go.TextBlock, textStyle(),
+                            {
+                                margin: 8,
+                                maxSize: new go.Size(160, NaN),
+                                wrap: go.TextBlock.WrapFit,
+                                editable: true
+                            },
+                            new go.Binding("text").makeTwoWay())
+                    ),
+                    makePort("T", go.Spot.Top, go.Spot.Top, false, true),
+                    makePort("L", go.Spot.Left, go.Spot.Left, true, true),
+                    makePort("R", go.Spot.Right, go.Spot.Right, true, true),
+                    makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false)
+                ));
+
             myDiagram.nodeTemplateMap.add("Start",
                 $(go.Node, "Table", nodeStyle(),
                     $(go.Panel, "Spot",
@@ -362,6 +397,7 @@
                             {category: "click", text: "Клик"},
                             {category: "fill_field", text: "Установить значение"},
                             {category: "condition", text: "Условие"},
+                            {category: "cycle", text: "Цикл"},
                             {category: "End", text: "Конец"},
                             {category: "Comment", text: "Комментарий"}
                         ])
