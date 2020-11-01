@@ -4,12 +4,28 @@
     <title>Автоматизатор</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css" />
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
 
     <script src="go.js"></script>
     <script id="code">
-        $(document).ready(function(){});
+        $(document).ready(function(){
+            var showConfig = false;
+            $("#configBtn").click(function(){
+                if (!showConfig) {
+                    $("#saveBtn").show(300);
+                    $("#loadBtn").show(300);
+                    $("#mySavedModel").show(300);
+                } else {
+                    $("#saveBtn").hide(300);
+                    $("#loadBtn").hide(300);
+                    $("#mySavedModel").hide(300);
+                }
+                showConfig = !showConfig;
+            })
+        });
 
         var globalJson = {};
 
@@ -662,15 +678,16 @@
         </div>
     </div>
     <center>
-        <button type="button" class="btn btn-primary" id="SaveButton" onclick="save()" style="margin: 15px;">Получить JSON</button>
-        <button type="button" class="btn btn-primary" onclick="load()" style="margin: 15px;">Загрузить из JSON</button>
-        <button type="button" class="btn btn-primary" onclick="printDiagram()">Напечатать</button>
+        <button type="button" class="btn btn-primary" id="configBtn" style="margin: 15px;">Настройка</button>
+        <button type="button" class="btn btn-primary" id="saveBtn" onclick="save()" style="display: none; margin: 15px;">Получить JSON</button>
+        <button type="button" class="btn btn-primary" id="loadBtn" onclick="load()" style="display: none; margin: 15px;">Загрузить из JSON</button>
+        <button type="button" class="btn btn-primary" onclick="printDiagram()">Напечатать диаграмму</button>
         <button type="button" class="btn btn-primary" onclick="sendJson()" style="margin: 15px;">Сформировать робота</button>
         <div class="lds-facebook" style="display: none;"><div></div><div></div><div></div></div>
         <a id="exeFile" style="display: none; margin: 10px;">Ссылка на исполняемых файл</a>
     </center>
-    <center><textarea id="mySavedModel" style="width:100%; height:300px;">
         {"class":"GraphLinksModel","linkFromPortIdProperty":"fromPort","linkToPortIdProperty":"toPort","nodeDataArray":[{"category":"Comment","loc":"360 -10","text":"Перенос доходов из Excel","key":-13},{"key":-1,"category":"Start","loc":"175 0","text":"Старт"},{"key":-2,"category":"End","loc":"175 660","text":"Конец"},{"category":"open_file","text":"Открыть программу","key":-3,"loc":"178 132","property":{"file_path":"C:\\fakepath\\1_37.png"}},{"category":"open_file","text":"Открыть программу","key":-5,"loc":"185 274","property":{"file_path":"C:\\fakepath\\907f1c77-eab2-4393-843b-93d291d56d4a.jpg"}},{"category":"fill_field","text":"Установить значение","key":-6,"loc":"221 393","property":{"object":"Приход","source":"A2B3"}},{"category":"fill_field","text":"Установить значение","key":-8,"loc":"319 533"}],"linkDataArray":[{"from":-1,"to":-3,"fromPort":"B","toPort":"T","points":[175,36.75,175,46.75,175,75.5311378479004,178,75.5311378479004,178,104.31227569580078,178,114.31227569580078]},{"from":-3,"to":-5,"fromPort":"B","toPort":"T","points":[178,149.6877243041992,178,159.6877243041992,178,203,185,203,185,246.3122756958008,185,256.3122756958008]},{"from":-6,"to":-8,"fromPort":"B","toPort":"T","points":[221.00000000000003,413.4491480533532,221.00000000000003,423.4491480533532,221.00000000000003,463,319,463,319,502.55085194664684,319,512.5508519466468]},{"from":-5,"to":-6,"fromPort":"B","toPort":"T","points":[185,291.6877243041992,185,301.6877243041992,185,332.11928812542305,221.00000000000003,332.11928812542305,221.00000000000003,362.55085194664684,221.00000000000003,372.55085194664684]},{"from":-8,"to":-2,"fromPort":"B","toPort":"T","points":[319,553.4491480533532,319,563.4491480533532,319,590.8495740266766,175,590.8495740266766,175,618.25,175,628.25]}]}
+    <center><textarea id="mySavedModel" style="display: none; width:100%; height:300px;">
     </textarea></center>
 </div>
 </body>
