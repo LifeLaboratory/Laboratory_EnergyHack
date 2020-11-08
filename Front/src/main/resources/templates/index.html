@@ -41,7 +41,15 @@
                         "LinkDrawn": showLinkLabel,
                         "LinkRelinked": showLinkLabel,
                         "undoManager.isEnabled": true
-                    });
+                    },
+                    {
+                        backgroundSingleClicked: function (e) {
+                            document.getElementById('propertiesForClickDiv').style.display='none';
+                            document.getElementById('propertiesForExcelDiv').style.display='none';
+                            document.getElementById('propertiesForPushToProgramDiv').style.display='none';
+                        }
+                    }
+                );
 
             myDiagram.addDiagramListener("Modified", function (e) {
             });
