@@ -83,16 +83,13 @@
             function textStyle() {
                 return {
                     font: "bold 11pt Lato, Helvetica, Arial, sans-serif",
-                    stroke: "#F8F8F8"
+                    stroke: "black"
                 }
             }
 
             myDiagram.nodeTemplateMap.add("",
                 $(go.Node, "Table", nodeStyle(),
                     $(go.Panel, "Auto",
-                        $(go.Shape, "Rectangle",
-                            {fill: "#282c34", stroke: "#00A9C9", strokeWidth: 3.5},
-                            new go.Binding("figure", "figure")),
                         $(go.TextBlock, textStyle(),
                             {
                                 margin: 8,
@@ -112,7 +109,7 @@
                 $(go.Node, "Table", nodeStyle(),
                     $(go.Panel, "Auto",
                         $(go.Shape, "Rectangle",
-                            {fill: "green", stroke: "#00A9C9", strokeWidth: 3.5},
+                            {fill: "#B8A5A8", stroke: "gray", strokeWidth: 3.5},
                             new go.Binding("figure", "figure")),
                         $(go.TextBlock, textStyle(),
                             {
@@ -154,7 +151,7 @@
                 $(go.Node, "Table", nodeStyle(),
                     $(go.Panel, "Auto",
                         $(go.Shape, "Ellipse",
-                            {fill: "slateblue", stroke: "#00A9C9", strokeWidth: 3.5},
+                            {fill: "#53923F", stroke: "gray", strokeWidth: 3.5},
                             new go.Binding("figure", "figure")),
                         $(go.TextBlock, textStyle(),
                             {
@@ -193,7 +190,7 @@
                 $(go.Node, "Table", nodeStyle(),
                     $(go.Panel, "Auto",
                         $(go.Shape, "RoundedRectangle",
-                            {fill: "maroon", stroke: "#00a9c9", strokeWidth: 3.5},
+                            {fill: "#9CA997", stroke: "gray", strokeWidth: 3.5},
                             new go.Binding("figure", "figure")),
                         $(go.TextBlock, textStyle(),
                             {
@@ -234,7 +231,7 @@
                 $(go.Node, "Table", nodeStyle(),
                     $(go.Panel, "Auto",
                         $(go.Shape, "Diamond",
-                            {fill: "#282c34", stroke: "#00A9C9", strokeWidth: 3.5},
+                            {fill: "#D3B278", stroke: "gray", strokeWidth: 3.5},
                             new go.Binding("figure", "figure")),
                         $(go.TextBlock, textStyle(),
                             {
@@ -269,11 +266,11 @@
                 $(go.Node, "Table", nodeStyle(),
                     $(go.Panel, "Auto",
                         $(go.Shape, "Cycle",
-                            {fill: "#282c34", stroke: "#00A9C9", strokeWidth: 3.5},
+                            {fill: "#6F8BB6", stroke: "gray", strokeWidth: 3.5},
                             new go.Binding("figure", "figure")),
                         $(go.TextBlock, textStyle(),
                             {
-                                margin: 8,
+                                margin: 20,
                                 maxSize: new go.Size(160, NaN),
                                 wrap: go.TextBlock.WrapFit,
                                 editable: true
@@ -290,7 +287,7 @@
                 $(go.Node, "Table", nodeStyle(),
                     $(go.Panel, "Spot",
                         $(go.Shape, "Circle",
-                            {desiredSize: new go.Size(70, 70), fill: "#282c34", stroke: "#09d3ac", strokeWidth: 3.5}),
+                            {desiredSize: new go.Size(70, 70), fill: "#d9ead3", stroke: "gray", strokeWidth: 3.5}),
                         $(go.TextBlock, "Start", textStyle(),
                             new go.Binding("text"))
                     ),
@@ -303,7 +300,7 @@
                 $(go.Node, "Table", nodeStyle(),
                     $(go.Panel, "Spot",
                         $(go.Shape, "Circle",
-                            {desiredSize: new go.Size(60, 60), fill: "#282c34", stroke: "#DC3C00", strokeWidth: 3.5}),
+                            {desiredSize: new go.Size(60, 60), fill: "#d9ead3", stroke: "gray", strokeWidth: 3.5}),
                         $(go.TextBlock, "End", textStyle(),
                             new go.Binding("text"))
                     ),
@@ -332,7 +329,7 @@
             myDiagram.nodeTemplateMap.add("Comment",
                 $(go.Node, "Auto", nodeStyle(),
                     $(go.Shape, "File",
-                        {fill: "#282c34", stroke: "#DEE0A3", strokeWidth: 3}),
+                        {fill: "#CBDBD8", stroke: "gray", strokeWidth: 3}),
                     $(go.TextBlock, textStyle(),
                         {
                             margin: 8,
@@ -404,17 +401,16 @@
                     {
                         "animationManager.initialAnimationStyle": go.AnimationManager.None,
                         "InitialAnimationStarting": animateFadeDown,
-
                         nodeTemplateMap: myDiagram.nodeTemplateMap,
                         model: new go.GraphLinksModel([
-                            {category: "Start", text: "Начало"},
+                            {category: "Start", text: "Старт"},
                             // {text: "Действие"},
                             {category: "open_file", text: "Открыть программу"},
                             {category: "click", text: "Клик"},
                             {category: "fill_field", text: "Установить значение"},
                             {category: "condition", text: "Условие"},
                             {category: "cycle", text: "Цикл"},
-                            {category: "End", text: "Конец"},
+                            {category: "End", text: "Финиш"},
                             {category: "Comment", text: "Комментарий"}
                         ])
                     });
@@ -572,6 +568,7 @@
             height: 32px;
         }
     }
+    .ui-resizable-helper { border: 2px dotted #00F; }
 </style>
 <body onload="init()">
 <div id="sample">
@@ -686,8 +683,8 @@
         <div class="lds-facebook" style="display: none;"><div></div><div></div><div></div></div>
         <a id="exeFile" style="display: none; margin: 10px;">Ссылка на исполняемых файл</a>
     </center>
-        {"class":"GraphLinksModel","linkFromPortIdProperty":"fromPort","linkToPortIdProperty":"toPort","nodeDataArray":[{"category":"Comment","loc":"360 -10","text":"Перенос доходов из Excel","key":-13},{"key":-1,"category":"Start","loc":"175 0","text":"Старт"},{"key":-2,"category":"End","loc":"175 660","text":"Конец"},{"category":"open_file","text":"Открыть программу","key":-3,"loc":"178 132","property":{"file_path":"C:\\fakepath\\1_37.png"}},{"category":"open_file","text":"Открыть программу","key":-5,"loc":"185 274","property":{"file_path":"C:\\fakepath\\907f1c77-eab2-4393-843b-93d291d56d4a.jpg"}},{"category":"fill_field","text":"Установить значение","key":-6,"loc":"221 393","property":{"object":"Приход","source":"A2B3"}},{"category":"fill_field","text":"Установить значение","key":-8,"loc":"319 533"}],"linkDataArray":[{"from":-1,"to":-3,"fromPort":"B","toPort":"T","points":[175,36.75,175,46.75,175,75.5311378479004,178,75.5311378479004,178,104.31227569580078,178,114.31227569580078]},{"from":-3,"to":-5,"fromPort":"B","toPort":"T","points":[178,149.6877243041992,178,159.6877243041992,178,203,185,203,185,246.3122756958008,185,256.3122756958008]},{"from":-6,"to":-8,"fromPort":"B","toPort":"T","points":[221.00000000000003,413.4491480533532,221.00000000000003,423.4491480533532,221.00000000000003,463,319,463,319,502.55085194664684,319,512.5508519466468]},{"from":-5,"to":-6,"fromPort":"B","toPort":"T","points":[185,291.6877243041992,185,301.6877243041992,185,332.11928812542305,221.00000000000003,332.11928812542305,221.00000000000003,362.55085194664684,221.00000000000003,372.55085194664684]},{"from":-8,"to":-2,"fromPort":"B","toPort":"T","points":[319,553.4491480533532,319,563.4491480533532,319,590.8495740266766,175,590.8495740266766,175,618.25,175,628.25]}]}
     <center><textarea id="mySavedModel" style="display: none; width:100%; height:300px;">
+        {"class":"GraphLinksModel","linkFromPortIdProperty":"fromPort","linkToPortIdProperty":"toPort","nodeDataArray":[{"category":"Comment","loc":"360 -10","text":"Перенос доходов из Excel","key":-13},{"key":-1,"category":"Start","loc":"175 0","text":"Старт"},{"key":-2,"category":"End","loc":"175 660","text":"Финиш"},{"category":"open_file","text":"Открыть программу","key":-3,"loc":"178 132"},{"category":"open_file","text":"Открыть программу","key":-5,"loc":"185 274"},{"category":"fill_field","text":"Установить значение","key":-6,"loc":"221 393"},{"category":"fill_field","text":"Установить значение","key":-8,"loc":"319 533"},{"category":"click","text":"Клик","key":-9,"loc":"-31 396"}],"linkDataArray":[{"from":-1,"to":-3,"fromPort":"B","toPort":"T","points":[175,36.75,175,46.75,175,75.5311378479004,178,75.5311378479004,178,104.31227569580078,178,114.31227569580078]},{"from":-3,"to":-5,"fromPort":"B","toPort":"T","points":[178,149.6877243041992,178,159.6877243041992,178,203,185,203,185,246.3122756958008,185,256.3122756958008]},{"from":-6,"to":-8,"fromPort":"B","toPort":"T","points":[221.00000000000003,413.4491480533532,221.00000000000003,423.4491480533532,221.00000000000003,463,319,463,319,502.55085194664684,319,512.5508519466468]},{"from":-5,"to":-9,"fromPort":"B","toPort":"T","points":[185,291.6877243041992,185,301.6877243041992,185,331.3862136752106,-31,331.3862136752106,-31,361.08470304622205,-31,371.08470304622205]},{"from":-8,"to":-2,"fromPort":"B","toPort":"T","points":[319,553.4491480533532,319,563.4491480533532,319,590.8495740266766,175,590.8495740266766,175,618.25,175,628.25]},{"from":-9,"to":-6,"fromPort":"B","toPort":"T","points":[-31,420.9152969537779,-31,430.9152969537779,70.33339102572849,430.9152969537779,70.33339102572849,362.55085194664684,221.00000000000003,362.55085194664684,221.00000000000003,372.55085194664684]}]}
     </textarea></center>
 </div>
 </body>
