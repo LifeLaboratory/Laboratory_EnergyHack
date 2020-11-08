@@ -415,14 +415,23 @@
                         new go.Binding("visible", "visible").makeTwoWay(),
                         $(go.Shape, "RoundedRectangle",
                             {fill: "#F8F8F8", strokeWidth: 0}),
-                        $(go.TextBlock, "Yes",
+                        $(go.TextBlock, "True",
                             {
                                 textAlign: "center",
                                 font: "10pt helvetica, arial, sans-serif",
-                                stroke: "#333333",
-                                editable: true
+                                stroke: "#333333"
                             },
-                            new go.Binding("text").makeTwoWay())
+                            new go.Binding("text").makeTwoWay(),
+                            {
+                                click: function(event, object){
+                                    console.log(object);
+                                    if (object.text === "True")
+                                        object.text = "False";
+                                    else
+                                        object.text = "True";
+                                }
+                            }
+                        )
                     )
                 );
 
