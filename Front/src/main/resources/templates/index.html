@@ -44,6 +44,7 @@
                     },
                     {
                         backgroundSingleClicked: function (e) {
+                            saveProperties();
                             document.getElementById('propertiesForClickDiv').style.display='none';
                             document.getElementById('propertiesForExcelDiv').style.display='none';
                             document.getElementById('propertiesForPushToProgramDiv').style.display='none';
@@ -134,6 +135,7 @@
                     makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false),
                     {
                         click: function (event, object) {
+                            saveProperties();
                             if (selectItem !== object.part.data.key) {
                                 document.getElementById("filePath").value = "";
                                 document.getElementById("filePathText").value = "";
@@ -176,6 +178,7 @@
                     makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false),
                     {
                         click: function (event, object) {
+                            saveProperties();
                             if (selectItem !== object.part.data.key) {
                                 document.getElementById("objectClick").value = "";
                             }
@@ -215,6 +218,7 @@
                     makePort("B", go.Spot.Bottom, go.Spot.BottomSide, true, false),
                     {
                         click: function (event, object) {
+                            saveProperties();
                             if (selectItem !== object.part.data.key) {
                                 document.getElementById("source").value = "";
                                 document.getElementById("object").value = "";
@@ -253,7 +257,12 @@
                     makePort("T", go.Spot.Top, go.Spot.Top, false, true),
                     makePort("L", go.Spot.Left, go.Spot.Left, true, true),
                     makePort("R", go.Spot.Right, go.Spot.Right, true, true),
-                    makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false)
+                    makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false),
+                    {
+                        click: function(event, object) {
+                            saveProperties();
+                        }
+                    }
                 ));
 
             go.Shape.defineFigureGenerator("Cycle", function (shape, w, h) {
@@ -288,7 +297,12 @@
                     makePort("T", go.Spot.Top, go.Spot.Top, false, true),
                     makePort("L", go.Spot.Left, go.Spot.Left, true, true),
                     makePort("R", go.Spot.Right, go.Spot.Right, true, true),
-                    makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false)
+                    makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false),
+                    {
+                        click: function(event, object) {
+                            saveProperties();
+                        }
+                    }
                 ));
 
             myDiagram.nodeTemplateMap.add("Start",
@@ -301,7 +315,14 @@
                     ),
                     makePort("L", go.Spot.Left, go.Spot.Left, true, false),
                     makePort("R", go.Spot.Right, go.Spot.Right, true, false),
-                    makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false)
+                    makePort("B", go.Spot.Bottom, go.Spot.Bottom, true, false),
+                    {
+                        click: function(event, object) {
+                            saveProperties();
+                        },
+                        mouseEnter: function(e, obj, prev) {
+                        }
+                    }
                 ));
 
             myDiagram.nodeTemplateMap.add("End",
@@ -314,7 +335,12 @@
                     ),
                     makePort("T", go.Spot.Top, go.Spot.Top, false, true),
                     makePort("L", go.Spot.Left, go.Spot.Left, false, true),
-                    makePort("R", go.Spot.Right, go.Spot.Right, false, true)
+                    makePort("R", go.Spot.Right, go.Spot.Right, false, true),
+                    {
+                        click: function(event, object) {
+                            saveProperties();
+                        }
+                    }
                 ));
 
             go.Shape.defineFigureGenerator("File", function (shape, w, h) {
@@ -346,7 +372,13 @@
                             textAlign: "center",
                             editable: true
                         },
-                        new go.Binding("text").makeTwoWay())
+                        new go.Binding("text").makeTwoWay(),
+                        {
+                            click: function(event, object) {
+                                saveProperties();
+                            }
+                        }
+                    )
                 ));
 
 
@@ -607,8 +639,6 @@
                 </tr>
                 </tbody>
             </table>
-
-            <button type="button" class="btn btn-secondary" onclick="saveProperties()">Применить</button>
         </div>
         <div id="propertiesForPushToProgramDiv"
              style="flex-grow: 1; height: 750px; padding: 5px; display: none; box-shadow: 0 0 5px rgba(0,0,0,0.5);">
@@ -643,8 +673,6 @@
                 </tr>
                 </tbody>
             </table>
-
-            <button type="button" class="btn btn-secondary" onclick="saveProperties()">Применить</button>
         </div>
         <div id="propertiesForClickDiv"
              style="flex-grow: 1; height: 750px; padding: 5px; display: none; box-shadow: 0 0 5px rgba(0,0,0,0.5);">
@@ -678,8 +706,6 @@
                 </tr>
                 </tbody>
             </table>
-
-            <button type="button" class="btn btn-secondary" onclick="saveProperties()">Применить</button>
         </div>
     </div>
     <center>
